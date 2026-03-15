@@ -1,4 +1,4 @@
-#代理团队深度代理团队
+# DeeperAgentTeam深度代理团队
 
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 由最中幻想设计的Chrome扩展，用于创建和管理多角色AI团队。它实现了
