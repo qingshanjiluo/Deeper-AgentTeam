@@ -1,8 +1,8 @@
-#深度代理团队
+# Deeper AgentTeam 深度代理团队
 
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-由**最中幻想**设计的 Chrome 扩展，用于创建和管理多角色 AI 团队。
+由 **最中幻想** 设计的 Chrome 扩展，用于创建和管理多角色 AI 团队。
 
 ---
 
@@ -25,7 +25,7 @@
 
 1. 下载本仓库源码到本地：
    ```bash
-git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
+   git clone https://github.com/qingshanjiluo/Deeper-AgentTeam.git
    ```
 2. 打开 Chrome 浏览器，进入扩展管理页面 `chrome://extensions/`。
 3. 开启右上角的“开发者模式”。
@@ -118,7 +118,7 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 ## 🧩 插件架构
 
 ```
-深度代理团队/
+deeper-agentteam/
 ├── manifest.json          # 扩展配置文件
 ├── src/
 │   ├── background/        # 后台脚本（数据管理、消息路由、递归控制）
@@ -131,7 +131,7 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 │       ├── popup.html
 │       └── popup.js
 └── assets/                # 图标资源
-└── 图标.png
+    └── icon.png
 ```
 
 ---
@@ -144,8 +144,8 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 |----------|------|------|
 | `CREATE_TEAM` | Popup → BG | 创建新团队 |
 | `ADD_MEMBER` | Panel → BG | 添加成员 |
-| `发送层级` |面板 → BG|发起串行群发|
-| `发送给成员` |面板 → BG|私聊|
+| `SEND_HIERARCHICAL` | Panel → BG | 发起串行群发 |
+| `SEND_TO_MEMBER` | Panel → BG | 私聊 |
 | `MEMBER_REPLY` | TabCS → BG | 成员标签页上报回复 |
 | `INIT_MEMBER` | BG → TabCS | 初始化成员标签页 |
 
@@ -161,7 +161,7 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)。
 3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)。
 4. 推送到分支 (`git push origin feature/AmazingFeature`)。
-5.打开一个拉取请求。
+5. 打开一个 Pull Request。
 
 请确保代码风格一致，并添加必要的注释。
 
@@ -186,7 +186,7 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 
 - [GitHub 仓库](https://github.com/qingshanjiluo/Deeper-AgentTeam.git)
 - [MK48 论坛](http://mk48by049.mbbs.cc)
-- [中国免费医学本科](http://china.free.mbbs.ss)
+- [China Free MBBS](http://china.free.mbbs.ss)
 - [Kimi 智能助手](https://kimi.com)
 - [文叔叔 - 文件传输](https://wenshushu.cn)
 - [AirPortal - 快传](https://airportal.cn)
@@ -206,4 +206,4 @@ git 克隆 https://github.com/qingshanjiluo/Deeper-AgentTeam.git
 
 ---
 
-**更深度的AgentTeam**—— 让 AI 团队协作更简单。
+**Deeper AgentTeam** —— 让 AI 团队协作更简单。
