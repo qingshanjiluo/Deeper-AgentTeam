@@ -230,10 +230,13 @@ function createTeam() {
       sendInterval: parseInt(document.getElementById('team-interval').value) || 5000,
       cleanupInterval: parseInt(document.getElementById('team-cleanup').value) || 3600000,
       maxConcurrentConversations: parseInt(document.getElementById('team-max-concurrent')?.value) || 0,
+      reinforcementInterval: parseInt(document.getElementById('team-reinforcement-interval')?.value) || 0,
       deepThink: document.getElementById('team-deep-think').checked,
       webSearch: document.getElementById('team-web-search').checked,
       individualMemory: document.getElementById('team-individual-memory').checked,
-      groupMemory: document.getElementById('team-group-memory').checked
+      groupMemory: document.getElementById('team-group-memory').checked,
+      autoContinue: document.getElementById('team-auto-continue').checked,
+      autoForward: document.getElementById('team-auto-forward').checked
     }
   };
   
@@ -265,6 +268,20 @@ function openTeamDetail(teamId) {
   document.getElementById('detail-team-name').textContent = team.name;
   document.getElementById('detail-name').value = team.name;
   document.getElementById('detail-desc').value = team.description || '';
+  document.getElementById('detail-shared-prompt').value = team.sharedPrompt || '';
+  document.getElementById('detail-aux-prompt').value = team.auxPrompt || '';
+  
+  // Load team settings
+  if (team.settings) {
+    document.getElementById('detail-interval').value = team.settings.sendInterval || 5000;
+    document.getElementById('detail-reinforcement-interval').value = team.settings.reinforcementInterval || 0;
+    document.getElementById('detail-deep-think').checked = team.settings.deepThink || false;
+    document.getElementById('detail-web-search').checked = team.settings.webSearch || false;
+    document.getElementById('detail-individual-memory').checked = team.settings.individualMemory !== false;
+    document.getElementById('detail-group-memory').checked = team.settings.groupMemory || false;
+    document.getElementById('detail-auto-continue').checked = team.settings.autoContinue !== false;
+    document.getElementById('detail-auto-forward').checked = team.settings.autoForward || false;
+  }
   
   renderMemberList(team);
   updateParentSelect(team);
@@ -338,7 +355,19 @@ function saveTeamDetail() {
   
   const updates = {
     name: document.getElementById('detail-name').value.trim(),
-    description: document.getElementById('detail-desc').value.trim()
+    description: document.getElementById('detail-desc').value.trim(),
+    sharedPrompt: document.getElementById('detail-shared-prompt').value.trim(),
+    auxPrompt: document.getElementById('detail-aux-prompt').value.trim(),
+    settings: {
+      sendInterval: parseInt(document.getElementById('detail-interval').value) || 5000,
+      reinforcementInterval: parseInt(document.getElementById('detail-reinforcement-interval').value) || 0,
+      deepThink: document.getElementById('detail-deep-think').checked,
+      webSearch: document.getElementById('detail-web-search').checked,
+      individualMemory: document.getElementById('detail-individual-memory').checked,
+      groupMemory: document.getElementById('detail-group-memory').checked,
+      autoContinue: document.getElementById('detail-auto-continue').checked,
+      autoForward: document.getElementById('detail-auto-forward').checked
+    }
   };
   
   chrome.runtime.sendMessage({ type: 'UPDATE_TEAM', teamId: currentTeamId, updates }, (result) => {

@@ -278,10 +278,29 @@
   text-align: right;
 }
 
+.at-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .at-message-sender {
   font-size: 11px;
-  color: #888;
-  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.at-sender-me {
+  color: #1a73e8;
+}
+
+.at-sender-other {
+  color: #34a853;
+}
+
+.at-message-time {
+  font-size: 10px;
+  color: #999;
 }
 
 .at-message-text {
@@ -318,6 +337,117 @@
 .at-chat-input textarea:focus {
   outline: none;
   border-color: #1a73e8;
+}
+
+/* Chat Controls */
+.at-chat-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.at-serial-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e8ecf4;
+}
+
+.at-form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.at-form-group label {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.at-form-select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #e8ecf4;
+  border-radius: 6px;
+  font-size: 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.at-form-select:focus {
+  outline: none;
+  border-color: #1a73e8;
+}
+
+.at-chat-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.at-btn-secondary {
+  background: #5f6368;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.at-btn-secondary:hover {
+  background: #4a4d52;
+}
+
+/* Notifications */
+.at-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 1000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+.at-notification-info {
+  background: #1a73e8;
+  color: white;
+}
+
+.at-notification-success {
+  background: #34a853;
+  color: white;
+}
+
+.at-notification-error {
+  background: #ea4335;
+  color: white;
+}
+
+.at-notification-warning {
+  background: #fbbc05;
+  color: #333;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Progress */

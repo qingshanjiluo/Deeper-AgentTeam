@@ -964,6 +964,11 @@
               <input type="number" id="team-max-concurrent" class="form-input" value="0" min="0" max="100" title="0表示不限制">
               <small style="color: #888;">0表示不限制</small>
             </div>
+            <div class="form-group">
+              <label class="form-label">巩固间隔 (对话轮数)</label>
+              <input type="number" id="team-reinforcement-interval" class="form-input" value="0" min="0" max="100" title="0表示不启用巩固，>0表示每N轮对话发送一次角色提示词">
+              <small style="color: #888;">0表示不启用，>0表示每N轮对话发送一次角色提示词</small>
+            </div>
           </div>
           <div class="form-row">
             <label class="checkbox-group">
@@ -981,6 +986,18 @@
             <label class="checkbox-group">
               <input type="checkbox" id="team-group-memory">
               <span>开启群体记忆</span>
+            </label>
+          </div>
+          <div class="form-row">
+            <label class="checkbox-group">
+              <input type="checkbox" id="team-auto-continue" checked>
+              <span>开启自动继续（选择推荐选项）</span>
+              <small style="color: #888; display: block; margin-top: 2px;">检测到JSON选项时自动发送第一个选项</small>
+            </label>
+            <label class="checkbox-group">
+              <input type="checkbox" id="team-auto-forward">
+              <span>开启消息自动转发</span>
+              <small style="color: #888; display: block; margin-top: 2px;">将成员消息自动转发给其他成员</small>
             </label>
           </div>
         </div>
@@ -1016,7 +1033,56 @@
               <label class="form-label">团队简介</label>
               <textarea id="detail-desc" class="form-textarea" rows="3"></textarea>
             </div>
-            <div class="btn-group">
+            <div class="form-group">
+              <label class="form-label">通用提示词 (所有成员共享)</label>
+              <textarea id="detail-shared-prompt" class="form-textarea" rows="4" placeholder="输入适用于所有团队成员的通用提示词"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">辅助提示词 (自动附加)</label>
+              <textarea id="detail-aux-prompt" class="form-textarea" rows="4" placeholder="每条消息末尾自动附加的提示词，如JSON指令模板"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">发送间隔 (毫秒)</label>
+                <input type="number" id="detail-interval" class="form-input" value="5000" min="1000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">巩固间隔 (对话轮数)</label>
+                <input type="number" id="detail-reinforcement-interval" class="form-input" value="0" min="0" max="100" title="0表示不启用巩固，>0表示每N轮对话发送一次角色提示词">
+                <small style="color: #888;">0表示不启用，>0表示每N轮对话发送一次角色提示词</small>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-deep-think">
+                <span>开启深度思考</span>
+              </label>
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-web-search">
+                <span>开启联网搜索</span>
+              </label>
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-individual-memory" checked>
+                <span>开启独立角色记忆</span>
+              </label>
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-group-memory">
+                <span>开启群体记忆</span>
+              </label>
+            </div>
+            <div class="form-row">
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-auto-continue" checked>
+                <span>开启自动继续（选择推荐选项）</span>
+                <small style="color: #888; display: block; margin-top: 2px;">检测到JSON选项时自动发送第一个选项</small>
+              </label>
+              <label class="checkbox-group">
+                <input type="checkbox" id="detail-auto-forward">
+                <span>开启消息自动转发</span>
+                <small style="color: #888; display: block; margin-top: 2px;">将成员消息自动转发给其他成员</small>
+              </label>
+            </div>
+            <div class="btn-group" style="margin-top: 20px;">
               <button class="btn btn-success" id="btn-start-team">启动团队</button>
               <button class="btn btn-primary" id="btn-save-team">保存设置</button>
               <button class="btn btn-danger" id="btn-delete-team">删除团队</button>

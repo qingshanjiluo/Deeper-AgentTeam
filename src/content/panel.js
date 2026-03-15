@@ -156,6 +156,8 @@
     }
 
     const team = teams[currentTeamId];
+    const topLevelMembers = team.members?.filter(m => !m.parentId) || [];
+    
     container.innerHTML = `
       <div class="at-chat">
         <div class="at-chat-header">${escapeHtml(team.name)}</div>
@@ -166,9 +168,23 @@
           `).join('') || ''}
         </div>
         <div class="at-chat-messages" id="at-messages"></div>
-        <div class="at-chat-input">
-          <textarea id="at-message-text" placeholder="输入消息..."></textarea>
-          <button class="at-btn at-btn-primary" id="at-send-btn">发送</button>
+        <div class="at-chat-controls">
+          <div class="at-serial-controls">
+            <div class="at-form-group">
+              <label for="at-start-member">起始成员：</label>
+              <select id="at-start-member" class="at-form-select">
+                <option value="">选择起始成员（通常为顶级成员）</option>
+                ${topLevelMembers.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}
+              </select>
+            </div>
+            <button class="at-btn at-btn-secondary" id="at-serial-send-btn">串行发送</button>
+          </div>
+          <div class="at-chat-input">
+            <textarea id="at-message-text" placeholder="输入消息..."></textarea>
+            <div class="at-chat-buttons">
+              <button class="at-btn at-btn-primary" id="at-send-btn">发送</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -183,6 +199,7 @@
       });
     });
 
+    // 普通发送按钮事件
     document.getElementById('at-send-btn').addEventListener('click', () => {
       const text = document.getElementById('at-message-text').value.trim();
       if (!text) return;
@@ -205,16 +222,60 @@
       addMessage('我', text, true);
       document.getElementById('at-message-text').value = '';
     });
+
+    // 串行发送按钮事件
+    document.getElementById('at-serial-send-btn').addEventListener('click', () => {
+      const text = document.getElementById('at-message-text').value.trim();
+      const startMemberId = document.getElementById('at-start-member').value;
+      
+      if (!text) {
+        showNotification('请输入消息内容', 'error');
+        return;
+      }
+      
+      if (!startMemberId) {
+        showNotification('请选择起始成员', 'error');
+        return;
+      }
+
+      // 发送串行发送请求
+      chrome.runtime.sendMessage({
+        type: 'SERIAL_SEND',
+        teamId: currentTeamId,
+        startMemberId: startMemberId,
+        message: text
+      }, (response) => {
+        if (response?.success) {
+          addMessage('系统', `已开始串行发送流程，起始成员：${getMemberName(startMemberId)}`, false);
+          showNotification('串行发送已开始', 'success');
+        } else {
+          showNotification(response?.error || '串行发送失败', 'error');
+        }
+      });
+
+      addMessage('我', `[串行发送] ${text} (起始成员：${getMemberName(startMemberId)})`, true);
+      document.getElementById('at-message-text').value = '';
+    });
   }
 
-  function addMessage(sender, text, isMe) {
+  function addMessage(sender, text, isMe, timestamp = Date.now()) {
     const container = document.getElementById('at-messages');
     if (!container) return;
 
     const div = document.createElement('div');
     div.className = `at-message ${isMe ? 'at-message-me' : ''}`;
+    
+    // 格式化时间
+    const timeStr = formatTime(timestamp);
+    
+    // 为不同发送者添加不同的样式类
+    const senderClass = isMe ? 'at-sender-me' : 'at-sender-other';
+    
     div.innerHTML = `
-      <div class="at-message-sender">${escapeHtml(sender)}</div>
+      <div class="at-message-header">
+        <span class="at-message-sender ${senderClass}">${escapeHtml(sender)}</span>
+        <span class="at-message-time">${timeStr}</span>
+      </div>
       <div class="at-message-text">${escapeHtml(text)}</div>
     `;
     container.appendChild(div);
@@ -362,6 +423,33 @@
     return date.toLocaleTimeString('zh-CN');
   }
 
+  function getMemberName(memberId) {
+    if (!currentTeamId || !teams[currentTeamId]) return '未知成员';
+    const team = teams[currentTeamId];
+    const member = team.members?.find(m => m.id === memberId);
+    return member ? member.name : '未知成员';
+  }
+
+  function showNotification(message, type = 'info') {
+    // 移除现有的通知
+    const existing = document.getElementById('at-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.id = 'at-notification';
+    notification.className = `at-notification at-notification-${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 3000);
+  }
+
   // ==================== Initialization ====================
   function init() {
     injectButton();
@@ -375,6 +463,15 @@
         }
         if (msg.type === 'REFRESH_DATA') {
           loadTeams();
+          sendResponse({ success: true });
+        }
+        if (msg.type === 'CONVERSATION_UPDATED') {
+          // 当成员回复时，在聊天面板中显示
+          const { teamId, memberId, message } = msg;
+          if (teamId === currentTeamId) {
+            const memberName = getMemberName(memberId);
+            addMessage(memberName, message.content, false);
+          }
           sendResponse({ success: true });
         }
       });

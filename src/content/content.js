@@ -63,7 +63,7 @@
           console.log('发送按钮未找到或被禁用，尝试替代方法');
           tryAlternativeSend(input, resolve, reject);
         }
-      }, options.delay || 500); // 增加延迟，确保UI更新
+      }, options.delay || 2000); // 增加延迟，确保UI更新和AI有足够时间输出
     });
   }
 
@@ -242,29 +242,118 @@
   }
 
   function toggleDeepThink(enable) {
-    const buttons = document.querySelectorAll('button');
-    for (const btn of buttons) {
-      const text = btn.textContent || '';
-      if (text.includes('深度思考') || text.includes('Deep Think')) {
-        const isActive = btn.classList.contains('active') || btn.getAttribute('aria-pressed') === 'true';
-        if (enable !== isActive) {
-          btn.click();
+    console.log('[AgentTeam] toggleDeepThink called with:', enable);
+    
+    // 尝试多种选择器来找到深度思考按钮
+    const selectors = [
+      // 通过文本内容查找
+      'button:contains("深度思考"), button:contains("Deep Think")',
+      // 通过类名查找（DeepSeek特定）
+      '.ds-toggle-button[aria-label*="深度思考"], .ds-toggle-button[aria-label*="Deep Think"]',
+      '.ds-atom-button[aria-label*="深度思考"], .ds-atom-button[aria-label*="Deep Think"]',
+      // 通过父元素或相邻元素查找
+      'div:has(> svg) + div:contains("深度思考")',
+      'div:has(> svg) + div:contains("Deep Think")'
+    ];
+    
+    let found = false;
+    
+    for (const selector of selectors) {
+      try {
+        // 使用更通用的方法：查找所有元素，然后检查内容
+        const elements = document.querySelectorAll('button, div[role="button"], .ds-toggle-button, .ds-atom-button');
+        for (const el of elements) {
+          const text = el.textContent || '';
+          const ariaLabel = el.getAttribute('aria-label') || '';
+          const title = el.getAttribute('title') || '';
+          
+          if (text.includes('深度思考') || text.includes('Deep Think') ||
+              ariaLabel.includes('深度思考') || ariaLabel.includes('Deep Think') ||
+              title.includes('深度思考') || title.includes('Deep Think')) {
+            console.log('[AgentTeam] Found deep think button:', { text, ariaLabel, title, classList: el.classList });
+            
+            const isActive = el.classList.contains('active') ||
+                            el.classList.contains('ds-toggle-button--selected') ||
+                            el.getAttribute('aria-pressed') === 'true' ||
+                            el.getAttribute('aria-checked') === 'true';
+            
+            console.log('[AgentTeam] Button active state:', isActive, 'desired:', enable);
+            
+            if (enable !== isActive) {
+              console.log('[AgentTeam] Clicking deep think button');
+              el.click();
+              // 等待一小段时间让状态更新
+              setTimeout(() => {
+                console.log('[AgentTeam] Deep think button clicked, new state:', !isActive);
+              }, 100);
+            }
+            
+            found = true;
+            break;
+          }
         }
-        break;
+        if (found) break;
+      } catch (error) {
+        console.error('[AgentTeam] Error in toggleDeepThink selector:', selector, error);
       }
+    }
+    
+    if (!found) {
+      console.warn('[AgentTeam] Could not find deep think button');
     }
   }
 
   function toggleWebSearch(enable) {
-    const buttons = document.querySelectorAll('button');
-    for (const btn of buttons) {
-      const text = btn.textContent || '';
-      if (text.includes('联网搜索') || text.includes('Web Search')) {
-        const isActive = btn.classList.contains('active') || btn.getAttribute('aria-pressed') === 'true';
+    console.log('[AgentTeam] toggleWebSearch called with:', enable);
+    
+    // 尝试多种选择器来找到联网搜索按钮
+    const elements = document.querySelectorAll('button, div[role="button"], .ds-toggle-button, .ds-atom-button');
+    let found = false;
+    
+    for (const el of elements) {
+      const text = el.textContent || '';
+      const ariaLabel = el.getAttribute('aria-label') || '';
+      const title = el.getAttribute('title') || '';
+      
+      // 检查是否包含相关关键词
+      const keywords = ['联网搜索', 'Web Search', '搜索', 'Search', '联网'];
+      const hasKeyword = keywords.some(keyword =>
+        text.includes(keyword) || ariaLabel.includes(keyword) || title.includes(keyword)
+      );
+      
+      if (hasKeyword) {
+        console.log('[AgentTeam] Found web search button:', { text, ariaLabel, title, classList: el.classList });
+        
+        const isActive = el.classList.contains('active') ||
+                        el.classList.contains('ds-toggle-button--selected') ||
+                        el.getAttribute('aria-pressed') === 'true' ||
+                        el.getAttribute('aria-checked') === 'true';
+        
+        console.log('[AgentTeam] Button active state:', isActive, 'desired:', enable);
+        
         if (enable !== isActive) {
-          btn.click();
+          console.log('[AgentTeam] Clicking web search button');
+          el.click();
+          // 等待一小段时间让状态更新
+          setTimeout(() => {
+            console.log('[AgentTeam] Web search button clicked, new state:', !isActive);
+          }, 100);
         }
+        
+        found = true;
         break;
+      }
+    }
+    
+    if (!found) {
+      console.warn('[AgentTeam] Could not find web search button');
+      // 尝试通过位置查找（通常在输入框附近）
+      const inputArea = document.querySelector('textarea, .ds-scroll-area, .chat-input');
+      if (inputArea) {
+        console.log('[AgentTeam] Found input area, looking for nearby buttons');
+        // 在输入区域附近查找切换按钮
+        const nearbyButtons = inputArea.parentElement?.querySelectorAll('button, .ds-toggle-button') || [];
+        console.log('[AgentTeam] Nearby buttons found:', nearbyButtons.length);
       }
     }
   }
@@ -886,6 +975,16 @@
       if (msg.type === 'EXTRACT_CONVERSATION') {
         const conversation = extractConversation();
         sendResponse({ conversation });
+        return true;
+      }
+
+      if (msg.type === 'UPDATE_TEAM_STATUS') {
+        const { enabled } = msg.payload || {};
+        if (enabled !== undefined) {
+          teamEnabled = enabled;
+          renderToggleState();
+          console.log('[AgentTeam] Team status updated from background:', enabled);
+        }
         return true;
       }
     });

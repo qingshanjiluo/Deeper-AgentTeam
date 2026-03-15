@@ -468,13 +468,7 @@ async function sendInitialPrompts(teamId, memberId) {
   initialMessage += '3. 可以使用JSON命令与其他成员交互，格式如：{"command": "指令类型", ...}\n';
   initialMessage += '4. 请使用清晰的结构化格式回复，便于其他成员理解\n\n';
   
-  // 5. 辅助提示词（JSON字段使用说明）
-  if (team.auxPrompt && team.auxPrompt.trim()) {
-    initialMessage += '=== 辅助提示词（JSON字段使用说明） ===\n';
-    initialMessage += team.auxPrompt + '\n\n';
-  }
-  
-  // 6. 当前上下文
+  // 5. 当前上下文
   initialMessage += '=== 当前上下文 ===\n';
   initialMessage += '这是你的初始设置。请确认你已理解以上信息，并准备好开始协作。\n';
   initialMessage += '你可以回复"已就绪"或提出任何疑问。\n';
@@ -1023,56 +1017,6 @@ function isCompleteJson(str) {
   return braceCount === 0 && bracketCount === 0;
 }
 
-// 辅助函数：通过多级匹配查找成员
-function findMemberByTarget(team, target) {
-  if (!team || !team.members || !target || typeof target !== 'string') {
-    return null;
-  }
-  
-  const trimmedTarget = target.trim();
-  if (!trimmedTarget) {
-    return null;
-  }
-  
-  // 1. 通过name字段精确匹配
-  let member = team.members.find(m => m.name === trimmedTarget);
-  if (member) {
-    Logger.debug('findMemberByTarget: matched by name', { target: trimmedTarget, memberName: member.name });
-    return member;
-  }
-  
-  // 2. 通过identifier字段精确匹配
-  member = team.members.find(m => m.identifier === trimmedTarget);
-  if (member) {
-    Logger.debug('findMemberByTarget: matched by identifier', { target: trimmedTarget, memberName: member.name });
-    return member;
-  }
-  
-  // 3. 通过aliases数组包含匹配（如果存在）
-  member = team.members.find(m => m.aliases && Array.isArray(m.aliases) && m.aliases.includes(trimmedTarget));
-  if (member) {
-    Logger.debug('findMemberByTarget: matched by alias', { target: trimmedTarget, memberName: member.name, aliases: member.aliases });
-    return member;
-  }
-  
-  // 4. 通过name字段不区分大小写匹配（可选，增强容错性）
-  member = team.members.find(m => m.name.toLowerCase() === trimmedTarget.toLowerCase());
-  if (member) {
-    Logger.debug('findMemberByTarget: matched by case-insensitive name', { target: trimmedTarget, memberName: member.name });
-    return member;
-  }
-  
-  // 5. 通过identifier字段不区分大小写匹配（可选）
-  member = team.members.find(m => m.identifier && m.identifier.toLowerCase() === trimmedTarget.toLowerCase());
-  if (member) {
-    Logger.debug('findMemberByTarget: matched by case-insensitive identifier', { target: trimmedTarget, memberName: member.name });
-    return member;
-  }
-  
-  Logger.debug('findMemberByTarget: no match found', { target: trimmedTarget, availableMembers: team.members.map(m => ({ name: m.name, identifier: m.identifier, aliases: m.aliases })) });
-  return null;
-}
-
 async function executeJsonCommand(teamId, command, fromMemberId) {
   const team = teams[teamId];
   if (!team) return { error: 'Team not found' };
@@ -1126,10 +1070,10 @@ async function executeJsonCommand(teamId, command, fromMemberId) {
   
   // Handle new format: {"type":"send", "target":"成员名称", "message":"要发送的内容"}
   if (safeCommand.type === 'send' && safeCommand.target && safeCommand.message) {
-    const targetMember = findMemberByTarget(team, safeCommand.target);
+    const targetMember = team.members.find(m => m.name === safeCommand.target);
     if (targetMember) {
       await sendMessageToMember(teamId, targetMember.id, safeCommand.message);
-      return { success: true, action: 'sent_to_member', target: safeCommand.target, matchedMember: targetMember.name };
+      return { success: true, action: 'sent_to_member', target: safeCommand.target };
     }
     return { error: 'Target member not found: ' + safeCommand.target };
   }
@@ -1137,12 +1081,12 @@ async function executeJsonCommand(teamId, command, fromMemberId) {
   // Handle legacy format with "command" field
   switch (safeCommand.command) {
     case 'sendTo':
-      const targetMember = findMemberByTarget(team, safeCommand.target);
+      const targetMember = team.members.find(m => m.name === safeCommand.target);
       if (targetMember) {
         await sendMessageToMember(teamId, targetMember.id, safeCommand.message);
-        return { success: true, action: 'sent', target: safeCommand.target, matchedMember: targetMember.name };
+        return { success: true, action: 'sent', target: safeCommand.target };
       }
-      return { error: 'Target member not found: ' + safeCommand.target };
+      return { error: 'Target member not found' };
       
     case 'broadcast':
       await broadcastToTeam(teamId, safeCommand.message);
