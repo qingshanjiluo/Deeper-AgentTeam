@@ -1,6 +1,7 @@
-#深度代理团队
+#代理团队深度代理团队
+
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-由DeepSeek（https://chat.deepseek.com）设计的Chrome扩展，用于创建和管理多角色AI团队。它实现了
+由最中幻想设计的Chrome扩展，用于创建和管理多角色AI团队。它实现了
 ---
 ## ✨ 功能特性
 - **团队管理**：创建团队，设置通用提示词、辅助提示词（定期强化角色）和团队介绍。
