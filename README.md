@@ -16,7 +16,7 @@
 ### 从源码加载（开发者模式）
 1. 下载本仓库源码到本地：
    ```bash
-[   git 克隆 https://github.com/yourusername/deeper-agentteam.git](https://github.com/qingshanjiluo/Deeper-AgentTeam.git)
+   https://github.com/qingshanjiluo/Deeper-AgentTeam.git
    ```
 2. 打开 Chrome 浏览器，进入扩展管理页面 `chrome://extensions/`。
 3. 开启右上角的“开发者模式”。
