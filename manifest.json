@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Deeper AgentTeam",
+  "version": "3.1.7",
+  "description": "在 DeepSeek 中创建多角色团队，自动协调对话",
+  "permissions": [
+    "storage",
+    "tabs",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://chat.deepseek.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "background": {
+    "service_worker": "src/background/worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/ui/popup.html",
+    "default_title": "Deeper AgentTeam"
+  },
+  "options_page": "src/ui/options.html",
+  "content_scripts": [
+    {
+      "matches": ["https://chat.deepseek.com/*"],
+      "js": [
+        "src/content/content.js",
+        "src/content/panel.js"
+      ],
+      "css": ["src/content/panel.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  }
+}

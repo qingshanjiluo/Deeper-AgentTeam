@@ -1,0 +1,475 @@
+/* src/content/panel.css */
+/* DeepSeek AgentTeam - In-page Panel Styles */
+
+/* Floating Button */
+.agentteam-floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999999;
+  background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+  transition: all 0.3s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.agentteam-floating-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 115, 232, 0.5);
+}
+
+/* Main Panel */
+#agentteam-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 380px;
+  height: 600px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 999999;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border: 1px solid #e8ecf4;
+}
+
+#agentteam-panel.minimized {
+  height: 48px;
+}
+
+/* Header */
+.agentteam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+  color: white;
+}
+
+.agentteam-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.agentteam-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.agentteam-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.agentteam-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Navigation */
+.agentteam-nav {
+  display: flex;
+  padding: 8px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e8ecf4;
+  gap: 4px;
+}
+
+.agentteam-nav-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.agentteam-nav-btn:hover {
+  background: #e8ecf4;
+}
+
+.agentteam-nav-btn.active {
+  background: #1a73e8;
+  color: white;
+}
+
+/* Content Area */
+.agentteam-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f5f7fa;
+}
+
+/* Empty State */
+.at-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+}
+
+.at-empty p {
+  margin: 8px 0;
+}
+
+/* Team List */
+.at-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.at-team-item {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e8ecf4;
+  transition: all 0.2s;
+}
+
+.at-team-item:hover {
+  border-color: #1a73e8;
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.1);
+}
+
+.at-team-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.at-team-meta {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.at-team-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons */
+.at-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.at-btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.at-btn-primary {
+  background: #1a73e8;
+  color: white;
+}
+
+.at-btn-primary:hover {
+  background: #1557b0;
+}
+
+.at-btn-secondary {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.at-btn-secondary:hover {
+  background: #d2e3fc;
+}
+
+.at-btn-danger {
+  background: #fce8e8;
+  color: #d93025;
+}
+
+.at-btn-danger:hover {
+  background: #fad2d2;
+}
+
+/* Chat */
+.at-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.at-chat-header {
+  font-weight: 600;
+  color: #1a73e8;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8ecf4;
+  margin-bottom: 12px;
+}
+
+.at-chat-channels {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.at-channel-btn {
+  padding: 6px 12px;
+  border: 1px solid #e8ecf4;
+  background: white;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.at-channel-btn:hover {
+  border-color: #1a73e8;
+}
+
+.at-channel-btn.active {
+  background: #1a73e8;
+  color: white;
+  border-color: #1a73e8;
+}
+
+.at-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #e8ecf4;
+}
+
+.at-message {
+  margin-bottom: 12px;
+}
+
+.at-message-me {
+  text-align: right;
+}
+
+.at-message-sender {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.at-message-text {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #e8ecf4;
+  border-radius: 12px;
+  font-size: 13px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.at-message-me .at-message-text {
+  background: #1a73e8;
+  color: white;
+}
+
+.at-chat-input {
+  display: flex;
+  gap: 8px;
+}
+
+.at-chat-input textarea {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e8ecf4;
+  border-radius: 8px;
+  resize: none;
+  height: 44px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.at-chat-input textarea:focus {
+  outline: none;
+  border-color: #1a73e8;
+}
+
+/* Progress */
+.at-progress {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e8ecf4;
+}
+
+.at-progress-header {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8ecf4;
+}
+
+.at-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.at-progress-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.at-progress-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.at-progress-status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.at-status-idle {
+  background: #e8ecf4;
+  color: #666;
+}
+
+.at-status-sending {
+  background: #fef3e8;
+  color: #f9ab00;
+}
+
+.at-status-waiting {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+.at-status-completed {
+  background: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.at-status-error {
+  background: #fce8e8;
+  color: #d93025;
+}
+
+/* Logs */
+.at-logs {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #e8ecf4;
+}
+
+.at-log-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 12px;
+}
+
+.at-log-item:last-child {
+  border-bottom: none;
+}
+
+.at-log-time {
+  color: #888;
+  font-size: 11px;
+  margin-right: 8px;
+}
+
+.at-log-message {
+  color: #333;
+}
+
+.at-log-info {
+  border-left: 3px solid #1a73e8;
+  padding-left: 8px;
+}
+
+.at-log-warn {
+  border-left: 3px solid #f9ab00;
+  padding-left: 8px;
+}
+
+.at-log-error {
+  border-left: 3px solid #d93025;
+  padding-left: 8px;
+}
+
+.at-log-debug {
+  border-left: 3px solid #888;
+  padding-left: 8px;
+}
+
+/* Scrollbar */
+.agentteam-content::-webkit-scrollbar,
+.at-chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agentteam-content::-webkit-scrollbar-track,
+.at-chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.agentteam-content::-webkit-scrollbar-thumb,
+.at-chat-messages::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.agentteam-content::-webkit-scrollbar-thumb:hover,
+.at-chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Animation */
+@keyframes at-slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+#agentteam-panel {
+  animation: at-slideIn 0.3s ease;
+}

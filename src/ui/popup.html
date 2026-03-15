@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      width: 360px; 
+      padding: 0; 
+      background: #ffffff; 
+      color: #1e293b; 
+      font-family: "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif;
+      margin: 0;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #4d6bfe 0%, #6b8cff 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .header p {
+      margin: 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 16px;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .team-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .team-item { 
+      background: #f8fafc; 
+      border-radius: 12px; 
+      padding: 12px 14px; 
+      margin-bottom: 8px; 
+      cursor: pointer; 
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    
+    .team-item:hover { 
+      background: #f1f5f9; 
+      border-color: #4d6bfe;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(77, 107, 254, 0.1);
+    }
+    
+    .team-name { 
+      font-weight: 600; 
+      color: #1e293b; 
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .team-meta { 
+      font-size: 12px; 
+      color: #64748b;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .team-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    
+    .status-dot.active { background: #22c55e; }
+    .status-dot.idle { background: #94a3b8; }
+    .status-dot.sending { background: #3b82f6; }
+    .status-dot.waiting { background: #f59e0b; }
+    
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      color: #94a3b8;
+    }
+    
+    .empty-state-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: #f1f5f9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #94a3b8;
+    }
+    
+    .btn {
+      background: #4d6bfe; 
+      border: none; 
+      color: white; 
+      border-radius: 30px; 
+      padding: 10px 20px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .btn:hover {
+      background: #3f5cf0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(77, 107, 254, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 12px;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .actions .btn {
+      flex: 1;
+    }
+    
+    hr { 
+      border: none; 
+      border-top: 1px solid #e2e8f0; 
+      margin: 16px 0; 
+    }
+    
+    /* 赞助区域 */
+    .sponsor-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 16px;
+      text-align: center;
+    }
+    
+    .sponsor-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 8px;
+    }
+    
+    .sponsor-text {
+      font-size: 12px;
+      color: #b45309;
+      margin-bottom: 10px;
+    }
+    
+    .sponsor-btn {
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .sponsor-btn:hover {
+      background: #d97706;
+    }
+    
+    /* 页脚 */
+    .footer { 
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-left {
+      font-size: 11px; 
+      color: #94a3b8;
+    }
+    
+    .footer-right {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .footer a { 
+      color: #4d6bfe; 
+      text-decoration: none;
+      font-size: 11px;
+      transition: color 0.2s;
+    }
+    
+    .footer a:hover {
+      color: #3f5cf0;
+      text-decoration: underline;
+    }
+    
+    /* 统计信息 */
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      margin-bottom: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #4d6bfe;
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    
+    /* 友链区域 */
+    .friend-links {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .friend-links-title {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .friend-links-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .friend-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 15px;
+      font-size: 11px;
+      color: #475569;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .friend-link:hover {
+      border-color: #4d6bfe;
+      color: #4d6bfe;
+      background: #eff6ff;
+    }
+    
+    .friend-link-icon {
+      width: 14px;
+      height: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Deeper AgentTeam</h1>
+    <p>多角色AI团队协作平台</p>
+  </div>
+  
+  <div class="content">
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="team-count">0</div>
+        <div class="stat-label">团队</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="member-count">0</div>
+        <div class="stat-label">成员</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="active-count">0</div>
+        <div class="stat-label">活跃</div>
+      </div>
+    </div>
+    
+    <div class="section-title">我的团队</div>
+    <div id="team-list" class="team-list">
+      <div class="empty-state">
+        <div class="empty-state-icon">+</div>
+        <p>还没有团队，快来创建一个吧！</p>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button id="create-team" class="btn">新建团队</button>
+      <button id="open-settings" class="btn btn-secondary btn-sm">设置</button>
+    </div>
+  </div>
+  
+  <div class="sponsor-section">
+    <div class="sponsor-title">请作者喝一杯咖啡吧，谢谢</div>
+    <div class="sponsor-text">您的支持是我们持续开发的动力！</div>
+    <button id="sponsor-btn" class="sponsor-btn">赞助支持</button>
+  </div>
+  
+  <div class="friend-links">
+    <div class="friend-links-title">友情链接</div>
+    <div class="friend-links-list">
+      <a href="https://github.com" target="_blank" class="friend-link">GitHub</a>
+      <a href="https://mk48by049.mbbs.cc" target="_blank" class="friend-link">MK48论坛</a>
+      <a href="https://china.free.mbbs.cc" target="_blank" class="friend-link">Free论坛</a>
+      <a href="https://kimi.com" target="_blank" class="friend-link">Kimi</a>
+      <a href="https://wenshushu.com" target="_blank" class="friend-link">文叔叔</a>
+      <a href="https://wenshushu.cn" target="_blank" class="friend-link">文叔叔CN</a>
+      <a href="https://airportal.cn" target="_blank" class="friend-link">AirPortal</a>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div class="footer-left">Made by 最中幻想</div>
+    <div class="footer-right">
+      <a href="#" id="link-help">帮助</a>
+      <a href="#" id="link-feedback">反馈</a>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

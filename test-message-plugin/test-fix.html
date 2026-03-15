@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消息发送修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 5px;
+            border-radius: 2px;
+        }
+        .log-info { background: #e7f3ff; }
+        .log-success { background: #d4edda; color: #155724; }
+        .log-error { background: #f8d7da; color: #721c24; }
+        .log-warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>消息发送修复测试</h1>
+        <p>这个页面用于测试主插件中消息发送功能的修复。</p>
+        
+        <div class="test-section">
+            <h3>测试1: 模拟输入框和发送按钮</h3>
+            <p>创建模拟的DeepSeek界面元素：</p>
+            <div id="simulated-ui">
+                <textarea id="test-textarea" placeholder="发送消息..." style="width: 100%; height: 100px; margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                <div id="test-send-button" role="button" class="ds-atom-button" style="background: #007bff; color: white; padding: 10px 20px; border-radius: 4px; display: inline-block; cursor: pointer; margin: 10px 0;">
+                    发送
+                </div>
+            </div>
+            <button class="test-button" onclick="testFindElements()">测试元素查找</button>
+            <button class="test-button" onclick="testSendMessage()">测试发送消息</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试2: 模拟Chrome扩展消息</h3>
+            <p>模拟从background worker发送的消息：</p>
+            <button class="test-button" onclick="simulateExtensionMessage()">模拟扩展消息</button>
+            <button class="test-button" onclick="simulateUndefinedMessage()">模拟undefined消息</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试日志</h3>
+            <div id="log" class="log-container"></div>
+            <button class="test-button" onclick="clearLog()">清空日志</button>
+        </div>
+    </div>
+
+    <script>
+        let logCount = 0;
+        
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${++logCount}] ${new Date().toLocaleTimeString()}: ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            logCount = 0;
+            log('日志已清空', 'info');
+        }
+        
+        // 模拟主插件中的函数
+        function findInputElement() {
+            const selectors = [
+                'textarea[placeholder*="发送消息"]',
+                'textarea[placeholder*="Message"]',
+                'textarea[placeholder*="输入"]',
+                'textarea[placeholder*="说"]',
+                '.ds-scroll-area textarea',
+                '._27c9245',
+                '.d96f2d2a',
+                'div[contenteditable="true"]',
+                'textarea',
+                '[data-testid="chat-input"]',
+                '.chat-input textarea',
+                'input[type="text"]'
+            ];
+            
+            for (const selector of selectors) {
+                const el = document.querySelector(selector);
+                if (el) {
+                    log(`找到输入框，选择器: ${selector}`, 'success');
+                    return el;
+                }
+            }
+            
+            log('未找到输入框', 'error');
+            return null;
+        }
+        
+        function findSendButton() {
+            const selectors = [
+                'div._7436101[role="button"]',
+                '.ds-atom-button[role="button"]',
+                '.ds-icon-button[role="button"]',
+                '.ds-toggle-button[role="button"]',
+                'div[role="button"].ds-atom-button',
+                'div[role="button"].ds-icon-button',
+                'button[type="submit"]',
+                'button[aria-label*="发送"]',
+                'button[aria-label*="Send"]',
+                '.send-button',
+                '[data-testid="send-button"]',
+                'button svg[viewBox]',
+                'button:has(svg)',
+                'button:has(path)'
+            ];
+            
+            for (const selector of selectors) {
+                const el = document.querySelector(selector);
+                if (el) {
+                    log(`找到发送按钮，选择器: ${selector}`, 'success');
+                    return el;
+                }
+            }
+            
+            log('未找到发送按钮', 'error');
+            return null;
+        }
+        
+        function sendMessage(text, options = {}) {
+            return new Promise((resolve, reject) => {
+                log(`sendMessage called with text: ${text.substring(0, 50)}...`, 'info');
+                
+                const input = findInputElement();
+                if (!input) {
+                    log('输入框未找到', 'error');
+                    reject(new Error('Input element not found'));
+                    return;
+                }
+                
+                input.focus();
+                const current = input.value;
+                let newValue;
+                
+                if (options.append && current.trim() !== '') {
+                    newValue = current + '\\n\\n' + text;
+                } else {
+                    newValue = text;
+                }
+                
+                input.value = newValue;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                
+                log('文本已插入，等待发送...', 'info');
+                
+                setTimeout(() => {
+                    const sendButton = findSendButton();
+                    
+                    if (sendButton && sendButton.getAttribute('aria-disabled') !== 'true') {
+                        log('点击发送按钮', 'info');
+                        try {
+                            sendButton.click();
+                            log('发送按钮点击成功', 'success');
+                            resolve(true);
+                        } catch (error) {
+                            log(`点击发送按钮失败: ${error}`, 'error');
+                            reject(error);
+                        }
+                    } else {
+                        log('发送按钮未找到或被禁用', 'error');
+                        reject(new Error('Send button not found or disabled'));
+                    }
+                }, options.delay || 500);
+            });
+        }
+        
+        // 测试函数
+        function testFindElements() {
+            log('开始测试元素查找...', 'info');
+            const input = findInputElement();
+            const button = findSendButton();
+            
+            if (input) {
+                log(`输入框找到: ${input.tagName} ${input.placeholder || ''}`, 'success');
+            }
+            
+            if (button) {
+                log(`发送按钮找到: ${button.tagName} ${button.textContent || ''}`, 'success');
+            }
+        }
+        
+        function testSendMessage() {
+            log('开始测试消息发送...', 'info');
+            const testText = '这是一条测试消息 ' + new Date().toLocaleTimeString();
+            
+            sendMessage(testText)
+                .then(() => {
+                    log('消息发送成功!', 'success');
+                    document.getElementById('test-textarea').value = '';
+                })
+                .catch(err => {
+                    log(`消息发送失败: ${err.message}`, 'error');
+                });
+        }
+        
+        function simulateExtensionMessage() {
+            log('模拟扩展消息...', 'info');
+            
+            // 模拟worker.js发送的消息格式
+            const mockMessage = {
+                type: 'SEND_MESSAGE',
+                payload: {
+                    text: '这是从background worker发送的消息 ' + new Date().toLocaleTimeString(),
+                    deepThink: false,
+                    webSearch: false,
+                    isFirstMessage: true
+                }
+            };
+            
+            // 模拟content.js中的消息处理
+            if (mockMessage.type === 'SEND_MESSAGE') {
+                const { text, message, deepThink, webSearch, isFirstMessage } = mockMessage.payload || {};
+                const messageToSend = text || message;
+                
+                log(`处理扩展消息: ${messageToSend.substring(0, 50)}...`, 'info');
+                log(`字段检查 - text: ${text}, message: ${message}, 最终消息: ${messageToSend}`, 'info');
+                
+                if (messageToSend) {
+                    sendMessage(messageToSend)
+                        .then(() => log('扩展消息发送成功!', 'success'))
+                        .catch(err => log(`扩展消息发送失败: ${err.message}`, 'error'));
+                } else {
+                    log('错误: 消息内容为undefined或空', 'error');
+                }
+            }
+        }
+        
+        function simulateUndefinedMessage() {
+            log('模拟undefined消息问题...', 'info');
+            
+            // 模拟旧的错误格式（只有message字段，没有text字段）
+            const mockMessageOld = {
+                type: 'SEND_MESSAGE',
+                payload: {
+                    message: undefined, // 这是旧的问题
+                    deepThink: false,
+                    webSearch: false
+                }
+            };
+            
+            // 模拟新的正确格式（有text字段）
+            const mockMessageNew = {
+                type: 'SEND_MESSAGE',
+                payload: {
+                    text: '这是修复后的消息 ' + new Date().toLocaleTimeString(),
+                    deepThink: false,
+                    webSearch: false
+                }
+            };
+            
+            log('测试旧格式（只有message字段）:', 'warning');
+            const { text: textOld, message: messageOld } = mockMessageOld.payload || {};
+            const messageToSendOld = textOld || messageOld;
+            log(`旧格式结果: text=${textOld}, message=${messageOld}, 最终消息=${messageToSendOld}`, 'warning');
+            
+            log('测试新格式（有text字段）:', 'info');
+            const { text: textNew, message: messageNew } = mockMessageNew.payload || {};
+            const messageToSendNew = textNew || messageNew;
+            log(`新格式结果: text=${textNew}, message=${messageNew}, 最终消息=${messageToSendNew}`, 'success');
+        }
+        
+        // 初始化
+        clearLog();
+        log('测试页面已加载', 'info');
+        log('修复说明:', 'info');
+        log('1. content.js现在同时支持text和message字段', 'info');
+        log('2. 优先使用text字段，兼容旧格式', 'info');
+        log('3. 改进了输入框和发送按钮的选择器', 'info');
+    </script>
+</body>
+</html>

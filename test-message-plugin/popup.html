@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>消息测试插件</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      width: 400px;
+      min-height: 500px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    h1 {
+      color: #4a5568;
+      margin-bottom: 10px;
+      font-size: 22px;
+      text-align: center;
+    }
+    
+    .subtitle {
+      color: #718096;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title::before {
+      content: "▶";
+      font-size: 12px;
+      color: #667eea;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: monospace;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+      margin-top: 5px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .btn-secondary:hover {
+      box-shadow: 0 5px 15px rgba(226, 232, 240, 0.4);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .btn-group .btn {
+      flex: 1;
+    }
+    
+    .test-results {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .result-item {
+      background: white;
+      border-left: 4px solid #667eea;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .result-success {
+      border-left-color: #48bb78;
+    }
+    
+    .result-error {
+      border-left-color: #f56565;
+    }
+    
+    .result-info {
+      border-left-color: #4299e1;
+    }
+    
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    
+    .result-time {
+      font-size: 11px;
+      color: #718096;
+    }
+    
+    .result-message {
+      word-break: break-all;
+      margin-bottom: 5px;
+    }
+    
+    .result-details {
+      font-size: 11px;
+      color: #718096;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    
+    .status-online {
+      background: #48bb78;
+    }
+    
+    .status-offline {
+      background: #cbd5e0;
+    }
+    
+    .status-error {
+      background: #f56565;
+    }
+    
+    .tab-info {
+      background: #edf2f7;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    
+    .log-entry {
+      font-family: monospace;
+      font-size: 11px;
+      padding: 4px 6px;
+      background: #f7fafc;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      border-left: 3px solid #cbd5e0;
+    }
+    
+    .log-error {
+      border-left-color: #f56565;
+      background: #fff5f5;
+    }
+    
+    .log-success {
+      border-left-color: #48bb78;
+      background: #f0fff4;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>消息测试插件</h1>
+    <div class="subtitle">诊断DeepSeek消息发送undefined问题</div>
+    
+    <div class="section">
+      <div class="section-title">当前页面状态</div>
+      <div id="page-status" class="tab-info">
+        正在检测页面状态...
+      </div>
+      <div class="btn-group">
+        <button id="refresh-status" class="btn btn-secondary">刷新状态</button>
+        <button id="open-deepseek" class="btn btn-secondary">打开DeepSeek</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">测试消息发送</div>
+      
+      <div class="form-group">
+        <label for="test-message">测试消息内容：</label>
+        <textarea id="test-message" placeholder="输入测试消息...">这是一条测试消息，用于检测undefined问题</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="test-type">测试类型：</label>
+        <select id="test-type">
+          <option value="direct">直接发送到当前标签页</option>
+          <option value="simulate">模拟发送（不实际发送）</option>
+          <option value="create_tab">创建新标签页并发送</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>特殊测试用例：</label>
+        <div class="btn-group">
+          <button id="test-empty" class="btn btn-secondary">空消息</button>
+          <button id="test-undefined" class="btn btn-secondary">undefined</button>
+          <button id="test-null" class="btn btn-secondary">null</button>
+          <button id="test-number" class="btn btn-secondary">数字123</button>
+        </div>
+      </div>
+      
+      <button id="send-test" class="btn">发送测试消息</button>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">测试结果</div>
+      <div class="btn-group">
+        <button id="clear-results" class="btn btn-secondary">清空结果</button>
+        <button id="view-logs" class="btn btn-secondary">查看日志</button>
+      </div>
+      <div id="test-results" class="test-results">
+        <!-- 测试结果将动态显示在这里 -->
+        <div class="result-item result-info">
+          <div class="result-header">
+            <span>等待测试...</span>
+            <span class="result-time">--:--:--</span>
+          </div>
+          <div class="result-message">点击"发送测试消息"开始测试</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">诊断信息</div>
+      <div id="diagnostic-info" class="tab-info">
+        诊断信息将显示在这里...
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
