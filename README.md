@@ -1,0 +1,2 @@
+# Deeper-AgentTeam
+适用于google的deepseek插件，主要作用是通过deepseek.chat.com网页进行多角色agent的对话和协作工作
